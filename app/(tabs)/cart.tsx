@@ -98,12 +98,12 @@ const CartScreen = () => {
             <Text style={styles.totalText}>${total.toFixed(2)}</Text>
           </View>
 
-          <TouchableOpacity style={styles.checkoutBtn}>
+          <TouchableOpacity style={styles.checkoutBtn} onPress={() => router.push("/product/shipping")}>
             <Text style={styles.checkoutBtnText}>Proceed to Checkout</Text>
           </TouchableOpacity>
         </View>
       )}
-    </SafeAreaView>
+    </SafeAreaView> 
   );
 };
 

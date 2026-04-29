@@ -57,7 +57,7 @@ export default function Home() {
           <TouchableOpacity
             style={styles.card}
             onPress={() => router.push({
-              pathname: "/app/product/[id]",
+              pathname: "/product/[id]",
               params: { 
                 id: item.id, 
                 name: item.name, 

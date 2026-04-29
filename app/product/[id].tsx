@@ -1,11 +1,30 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCartStore } from '../(tabs)/useCartStore'; // ajuste o caminho se necessário
 
 export default function ProductDetailPage() {
   const { id, name, price, image } = useLocalSearchParams();
+  const addItem = useCartStore((state) => state.addItem); // <--- PEGA A FUNÇÃO DA LOJA
 
+  const handleAddToCart = () => {
+    // Convertemos o preço para número (removendo o $) para o cálculo do subtotal funcionar
+    const numericPrice = typeof price === 'string' 
+      ? parseFloat(price.replace('$', '')) 
+      : 0;
+
+    addItem({
+      id: id as string,
+      name: name as string,
+      price: numericPrice,
+      image: image as string,
+      size: 'M' // Valor padrão ou pegue de um estado de seleção
+    });
+
+    router.push("/cart"); // Navega para o carrinho
+  };
   return (
+    
     <SafeAreaView style={styles.container}>
       {/* 1. ÁREA ROLÁVEL (Imagem e Informações) */}
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -30,9 +49,12 @@ export default function ProductDetailPage() {
             <Text style={styles.footerPrice}>${price}</Text>
         </View>
         
-        <TouchableOpacity style={styles.addToCartButton}>
-          <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableOpacity>
+        <TouchableOpacity 
+      style={styles.addToCartButton}
+      onPress={handleAddToCart} // <--- AGORA ELE ADICIONA E NAVEGA
+    >
+      <Text style={styles.addToCartText}>Add to Cart</Text>
+    </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
