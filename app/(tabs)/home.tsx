@@ -8,7 +8,8 @@ import {
   View,
 } from "react-native";
 
-
+// Usamos "as" para dar um apelido ao ícone e não bater com o nome da função
+import { House as HomeIcon, List, ShoppingCart, User } from 'lucide-react-native';
 const categories = ["Featured", "New Arrivals", "Best Sellers", "Sale"];
 
 const products = [
@@ -76,27 +77,27 @@ export default function Home() {
 
       {/* BOTTOM NAV */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>⌂</Text>
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.navItem} onPress={() => router.push("/")}>
+        <HomeIcon color="#1B263B" size={24} />
+        <Text style={styles.navText}>Home</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>☰</Text>
-          <Text style={styles.navText}>Categories</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.navItem} onPress={() => router.push("/")}>
+        <List color="#1B263B" size={24} />
+        <Text style={styles.navText}>Categories</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push("/cart")}>
-          <Text style={styles.navIcon}>🛒</Text>
-          <Text style={styles.navText}>Cart</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.navItem} onPress={() => router.push("/cart")}>
+        <ShoppingCart color="#1B263B" size={24} />
+        <Text style={styles.navText}>Cart</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>◯</Text>
-          <Text style={styles.navText}>Profile</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles.navItem} onPress={() => router.push('/profile')}>
+        <User color="#1B263B" size={24} />
+        <Text style={styles.navText}>Profile</Text>
+      </TouchableOpacity>
     </View>
+  </View>
   ); // <--- AQUI FECHA O RETURN
 } // <--- AQUI FECHA A FUNÇÃO HOME
 

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import React, { useState } from 'react';
 import {
   SafeAreaView,
@@ -8,91 +8,341 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
+import { useCartStore } from '../(tabs)/useCartStore';
+
+const COLORS = {
+  bgDark: '#0D131F',
+  cardDark: '#1E293B',
+  lavender: '#D7C4F2',
+  textWhite: '#FFFFFF',
+  textGray: '#94A3B8',
+  textInputPlaceholder: '#64748B',
+  borderDark: '#334155',
+};
+
 export default function ShippingScreen() {
-  const [shippingMethod, setShippingMethod] = useState('standard');
+  const shippingAddress = useCartStore(
+    (state) => state.shippingAddress
+  );
+
+  const paymentMethod = useCartStore(
+    (state) => state.paymentMethod
+  );
+
+  const updateShippingAddress = useCartStore(
+    (state) => state.updateShippingAddress
+  );
+
+  const [shippingMethod, setShippingMethod] =
+    useState('standard');
 
   return (
     <SafeAreaView style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="white" />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={COLORS.textWhite}
+          />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Shipping</Text>
+
+        <Text style={styles.headerTitle}>
+          Shipping
+        </Text>
+
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* FORMULÁRIO */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput style={styles.input} placeholder="Enter your full name" placeholderTextColor="#A0AEC0" />
-        </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* FULL NAME */}
+        <Text style={styles.sectionTitle}>
+          Full Name
+        </Text>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Address</Text>
-          <TextInput style={styles.input} placeholder="Enter your address" placeholderTextColor="#A0AEC0" />
-        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your full name"
+          placeholderTextColor={
+            COLORS.textInputPlaceholder
+          }
+          value={shippingAddress.fullName}
+          onChangeText={(text) =>
+            updateShippingAddress({
+              fullName: text,
+            })
+          }
+        />
 
-        <View style={styles.row}>
-          <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
-            <Text style={styles.label}>City</Text>
-            <TextInput style={styles.input} placeholder="City" placeholderTextColor="#A0AEC0" />
-          </View>
-          <View style={[styles.inputGroup, { flex: 1 }]}>
-            <Text style={styles.label}>State/Province</Text>
-            <TextInput style={styles.input} placeholder="State" placeholderTextColor="#A0AEC0" />
-          </View>
-        </View>
+        {/* ADDRESS */}
+        <Text style={styles.sectionTitle}>
+          Address
+        </Text>
 
-        <View style={styles.row}>
-          <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
-            <Text style={styles.label}>Zip/Postal Code</Text>
-            <TextInput style={styles.input} placeholder="Zip Code" placeholderTextColor="#A0AEC0" keyboardType="numeric" />
-          </View>
-          <View style={[styles.inputGroup, { flex: 1 }]}>
-            <Text style={styles.label}>Phone Number</Text>
-            <TextInput style={styles.input} placeholder="Phone" placeholderTextColor="#A0AEC0" keyboardType="phone-pad" />
-          </View>
-        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your address"
+          placeholderTextColor={
+            COLORS.textInputPlaceholder
+          }
+          value={shippingAddress.address}
+          onChangeText={(text) =>
+            updateShippingAddress({
+              address: text,
+            })
+          }
+        />
 
-        <Text style={styles.sectionTitle}>Shipping Method</Text>
+        {/* CITY */}
+        <Text style={styles.sectionTitle}>
+          City
+        </Text>
 
-        {/* SHIPPING METHODS */}
-        <TouchableOpacity 
-          style={[styles.methodCard, shippingMethod === 'standard' && styles.methodCardActive]} 
-          onPress={() => setShippingMethod('standard')}
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your city"
+          placeholderTextColor={
+            COLORS.textInputPlaceholder
+          }
+          value={shippingAddress.city}
+          onChangeText={(text) =>
+            updateShippingAddress({
+              city: text,
+            })
+          }
+        />
+
+        {/* STATE */}
+        <Text style={styles.sectionTitle}>
+          State/Province
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your state/province"
+          placeholderTextColor={
+            COLORS.textInputPlaceholder
+          }
+          value={shippingAddress.state}
+          onChangeText={(text) =>
+            updateShippingAddress({
+              state: text,
+            })
+          }
+        />
+
+        {/* ZIP CODE */}
+        <Text style={styles.sectionTitle}>
+          Zip/Postal Code
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your zip/postal code"
+          placeholderTextColor={
+            COLORS.textInputPlaceholder
+          }
+          value={shippingAddress.zipCode}
+          onChangeText={(text) =>
+            updateShippingAddress({
+              zipCode: text,
+            })
+          }
+        />
+
+        {/* PHONE */}
+        <Text style={styles.sectionTitle}>
+          Phone Number
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your phone number"
+          placeholderTextColor={
+            COLORS.textInputPlaceholder
+          }
+        />
+
+        {/* SHIPPING METHOD */}
+        <Text style={styles.sectionTitle}>
+          Shipping Method
+        </Text>
+
+        <TouchableOpacity
+          style={[
+            styles.methodItem,
+            shippingMethod === 'standard' &&
+              styles.activeMethod,
+          ]}
+          onPress={() =>
+            setShippingMethod('standard')
+          }
         >
           <View>
-            <Text style={styles.methodTitle}>Standard (5-7 days)</Text>
-            <Text style={styles.methodPrice}>Free</Text>
+            <Text style={styles.methodTitle}>
+              Standard (5-7 days)
+            </Text>
+
+            <Text style={styles.methodSubtitle}>
+              Free
+            </Text>
           </View>
-          <View style={styles.radioOuter}>
-            {shippingMethod === 'standard' && <View style={styles.radioInner} />}
+
+          <View
+            style={[
+              styles.radioOuter,
+              shippingMethod ===
+                'standard' &&
+                styles.radioOuterActive,
+            ]}
+          >
+            {shippingMethod ===
+              'standard' && (
+              <View style={styles.radioInner} />
+            )}
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.methodCard, shippingMethod === 'express' && styles.methodCardActive]} 
-          onPress={() => setShippingMethod('express')}
+        <TouchableOpacity
+          style={[
+            styles.methodItem,
+            shippingMethod === 'express' &&
+              styles.activeMethod,
+          ]}
+          onPress={() =>
+            setShippingMethod('express')
+          }
         >
           <View>
-            <Text style={styles.methodTitle}>Express (2-3 days)</Text>
-            <Text style={styles.methodPrice}>$10</Text>
+            <Text style={styles.methodTitle}>
+              Express (2-3 days)
+            </Text>
+
+            <Text style={styles.methodSubtitle}>
+              $10
+            </Text>
           </View>
-          <View style={styles.radioOuter}>
-            {shippingMethod === 'express' && <View style={styles.radioInner} />}
+
+          <View
+            style={[
+              styles.radioOuter,
+              shippingMethod ===
+                'express' &&
+                styles.radioOuterActive,
+            ]}
+          >
+            {shippingMethod ===
+              'express' && (
+              <View style={styles.radioInner} />
+            )}
           </View>
         </TouchableOpacity>
 
-        {/* BOTÃO FINAL */}
-        <TouchableOpacity style={styles.continueButton} onPress={() => router.push('../payment')}>
-          <Text style={styles.continueText}>Continue to Payment</Text>
+        {/* PAYMENT */}
+        <Text style={styles.sectionTitle}>
+          Selected Payment Method
+        </Text>
+
+        <View style={styles.paymentSummary}>
+          <Text style={styles.paymentText}>
+            Method: {paymentMethod}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() =>
+              router.push('/product/payment')
+            }
+          >
+            <Text style={styles.changeText}>
+              Change
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* BUTTON */}
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() =>
+            router.push(
+              '/(tabs)/OrderConfirmation'
+            )
+          }
+        >
+          <Text style={styles.saveButtonText}>
+            Continue to Payment
+          </Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* BOTTOM NAV */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/')}
+        >
+          <Ionicons
+            name="home-outline"
+            size={24}
+            color="#4A306D"
+          />
+
+          <Text style={styles.navText}>
+            Home
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navItem}
+        >
+          <Ionicons
+            name="list-outline"
+            size={24}
+            color="#4A306D"
+          />
+
+          <Text style={styles.navText}>
+            Categories
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/cart')}
+        >
+          <Ionicons
+            name="cart-outline"
+            size={24}
+            color="#4A306D"
+          />
+
+          <Text style={styles.navText}>
+            Cart
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navItem}
+        >
+          <Ionicons
+            name="person-outline"
+            size={24}
+            color="#4A306D"
+          />
+
+          <Text style={styles.navText}>
+            Profile
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -100,100 +350,152 @@ export default function ShippingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A', // Azul bem escuro do seu Figma
+    backgroundColor: '#0D131F',
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#D7C4F2', // Cabeçalho lilás igual ao print
-    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
+
   headerTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#FFFFFF',
   },
+
   scrollContent: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 160,
   },
-  inputGroup: {
-    marginBottom: 15,
+
+  sectionTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginTop: 15,
   },
-  label: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
+
+  input: {
+    backgroundColor: '#1E293B',
+    borderRadius: 12,
+    padding: 16,
+    color: '#FFFFFF',
+    fontSize: 16,
+    marginBottom: 10,
+  },
+
+  methodItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#1E293B',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'transparent',
     marginBottom: 8,
   },
-  input: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 15,
+
+  activeMethod: {
+    borderColor: '#D7C4F2',
+  },
+
+  methodTitle: {
+    color: '#FFFFFF',
     fontSize: 16,
-    color: '#0F172A',
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  sectionTitle: {
-    color: 'white',
-    fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 15,
   },
-  methodCard: {
+
+  methodSubtitle: {
+    color: '#94A3B8',
+    fontSize: 14,
+    marginTop: 2,
+  },
+
+  paymentSummary: {
+    backgroundColor: '#1E293B',
+    padding: 16,
+    borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#334155',
-    padding: 20,
-    borderRadius: 15,
-    marginBottom: 12,
+    marginBottom: 20,
   },
-  methodCardActive: {
-    borderColor: '#D7C4F2',
-    backgroundColor: '#1E293B',
-  },
-  methodTitle: {
-    color: 'white',
+
+  paymentText: {
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
   },
-  methodPrice: {
-    color: '#94A3B8',
-    fontSize: 14,
-    marginTop: 4,
+
+  changeText: {
+    color: '#D7C4F2',
+    fontWeight: 'bold',
   },
+
+  saveButton: {
+    backgroundColor: '#D7C4F2',
+    padding: 18,
+    borderRadius: 15,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
+  saveButtonText: {
+    color: '#4A306D',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  bottomNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#D7C4F2',
+    paddingVertical: 12,
+    paddingBottom: 22,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+
+  navItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+
+  navText: {
+    color: '#4A306D',
+    fontSize: 11,
+    marginTop: 3,
+    fontWeight: '500',
+  },
+
   radioOuter: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     borderWidth: 2,
-    borderColor: '#D7C4F2',
+    borderColor: '#334155',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  radioOuterActive: {
+    borderColor: '#D7C4F2',
+  },
+
   radioInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
     backgroundColor: '#D7C4F2',
-  },
-  continueButton: {
-    backgroundColor: '#D7C4F2',
-    padding: 20,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  continueText: {
-    color: '#0F172A',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });

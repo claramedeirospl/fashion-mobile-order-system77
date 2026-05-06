@@ -1,22 +1,37 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router'; // Importado Stack para esconder o header
 import React, { useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
+import { useCartStore } from '../(tabs)/useCartStore';
 
 export default function PaymentScreen() {
   const [selectedMethod, setSelectedMethod] = useState('visa');
+  
+  // Pega a função de salvar o pagamento da sua Store
+  const setPaymentMethod = useCartStore((state) => state.setPaymentMethod);
+
+  const handleSavePayment = () => {
+    // 1. Salva o método selecionado na Store Global
+    setPaymentMethod(selectedMethod);
+    
+    // 2. Volta para a tela de Shipping (que já estará lendo o valor atualizado)
+    router.back();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* HEADER */}
+      {/* Esconde o header branco padrão do Expo Router */}
+      <Stack.Screen options={{ headerShown: false }} />
+
+      {/* HEADER PERSONALIZADO */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -29,7 +44,6 @@ export default function PaymentScreen() {
         
         <Text style={styles.sectionTitle}>Accepted Payment Methods</Text>
         
-        {/* MÉTODOS DE CARTÃO */}
         <View style={styles.methodsContainer}>
           <TouchableOpacity 
             style={[styles.methodItem, selectedMethod === 'visa' && styles.activeMethod]}
@@ -58,7 +72,6 @@ export default function PaymentScreen() {
 
         <Text style={styles.sectionTitle}>Card Details</Text>
         
-        {/* CAMPOS DE DETALHES DO CARTÃO */}
         <View style={styles.inputGroup}>
           <TextInput 
             style={styles.inputFull} 
@@ -85,19 +98,27 @@ export default function PaymentScreen() {
 
         <Text style={styles.sectionTitle}>Digital Wallets</Text>
 
-        {/* WALLETS DIGITAIS */}
-        <TouchableOpacity style={styles.walletItem}>
+        <TouchableOpacity 
+          style={[styles.walletItem, selectedMethod === 'apple-pay' && styles.activeMethod]}
+          onPress={() => setSelectedMethod('apple-pay')}
+        >
           <Ionicons name="logo-apple" size={24} color="white" />
           <Text style={styles.methodLabel}>Apple Pay</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.walletItem}>
+        <TouchableOpacity 
+          style={[styles.walletItem, selectedMethod === 'google-pay' && styles.activeMethod]}
+          onPress={() => setSelectedMethod('google-pay')}
+        >
           <Ionicons name="logo-google" size={24} color="white" />
           <Text style={styles.methodLabel}>Google Pay</Text>
         </TouchableOpacity>
 
-        {/* BOTÃO DE SALVAR */}
-        <TouchableOpacity style={styles.saveButton}>
+        {/* BOTÃO DE SALVAR ATUALIZADO */}
+        <TouchableOpacity 
+          style={styles.saveButton}
+          onPress={handleSavePayment}
+        >
           <Text style={styles.saveButtonText}>Save Payment Method</Text>
         </TouchableOpacity>
 
@@ -106,95 +127,22 @@ export default function PaymentScreen() {
   );
 }
 
+// ... styles permanecem os mesmos
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f172a', // Fundo Dark conforme imagem
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 40,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  scrollContent: {
-    padding: 20,
-  },
-  sectionTitle: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 25,
-    marginBottom: 15,
-  },
-  methodsContainer: {
-    gap: 12,
-  },
-  methodItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1e293b',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'transparent',
-  },
-  activeMethod: {
-    borderColor: '#3b82f6', // Borda azul ao selecionar
-    backgroundColor: '#1e293b',
-  },
-  walletItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1e293b',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  methodLabel: {
-    color: 'white',
-    fontSize: 16,
-    marginLeft: 15,
-  },
-  inputGroup: {
-    marginBottom: 15,
-  },
-  inputFull: {
-    backgroundColor: '#1e293b',
-    borderRadius: 12,
-    padding: 18,
-    color: 'white',
-    fontSize: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    marginBottom: 25,
-  },
-  inputHalf: {
-    flex: 1,
-    backgroundColor: '#1e293b',
-    borderRadius: 12,
-    padding: 18,
-    color: 'white',
-    fontSize: 16,
-  },
-  saveButton: {
-    backgroundColor: '#3b82f6', // Azul vibrante do botão
-    padding: 20,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+  container: { flex: 1, backgroundColor: '#0f172a' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, paddingTop: 40 },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: 'white' },
+  scrollContent: { padding: 20 },
+  sectionTitle: { color: 'white', fontSize: 18, fontWeight: 'bold', marginTop: 10, marginBottom: 15 },
+  methodsContainer: { gap: 12 },
+  methodItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1e293b', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
+  activeMethod: { borderColor: '#3b82f6', backgroundColor: '#1e293b' },
+  walletItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1e293b', padding: 16, borderRadius: 12, marginBottom: 12, borderWidth: 1, borderColor: 'transparent' },
+  methodLabel: { color: 'white', fontSize: 16, marginLeft: 15 },
+  inputGroup: { marginBottom: 15 },
+  inputFull: { backgroundColor: '#1e293b', borderRadius: 12, padding: 18, color: 'white', fontSize: 16 },
+  row: { flexDirection: 'row', marginBottom: 25 },
+  inputHalf: { flex: 1, backgroundColor: '#1e293b', borderRadius: 12, padding: 18, color: 'white', fontSize: 16 },
+  saveButton: { backgroundColor: '#3b82f6', padding: 20, borderRadius: 15, alignItems: 'center', marginTop: 20, marginBottom: 40 },
+  saveButtonText: { color: 'white', fontSize: 18, fontWeight: 'bold' },
 });
